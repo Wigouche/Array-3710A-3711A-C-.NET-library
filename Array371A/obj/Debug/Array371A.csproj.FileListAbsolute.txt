@@ -1,0 +1,12 @@
+C:\Users\PeterH\OneDrive\Programs\repos\Array371A\Array371A\obj\Debug\Array371A.csprojResolveAssemblyReference.cache
+C:\Users\PeterH\OneDrive\Programs\repos\Array371A\Array371A\obj\Debug\Array371A.csproj.CoreCompileInputs.cache
+C:\Users\PeterH\OneDrive\Programs\repos\Array371A\Array371A\bin\Debug\Array371A.dll
+C:\Users\PeterH\OneDrive\Programs\repos\Array371A\Array371A\bin\Debug\Array371A.pdb
+C:\Users\PeterH\OneDrive\Programs\repos\Array371A\Array371A\obj\Debug\Array371A.dll
+C:\Users\PeterH\OneDrive\Programs\repos\Array371A\Array371A\obj\Debug\Array371A.pdb
+C:\Users\prhai\OneDrive\Programs\repos\Array371A\Array371A\bin\Debug\Array371A.dll
+C:\Users\prhai\OneDrive\Programs\repos\Array371A\Array371A\bin\Debug\Array371A.pdb
+C:\Users\prhai\OneDrive\Programs\repos\Array371A\Array371A\obj\Debug\Array371A.csprojResolveAssemblyReference.cache
+C:\Users\prhai\OneDrive\Programs\repos\Array371A\Array371A\obj\Debug\Array371A.csproj.CoreCompileInputs.cache
+C:\Users\prhai\OneDrive\Programs\repos\Array371A\Array371A\obj\Debug\Array371A.dll
+C:\Users\prhai\OneDrive\Programs\repos\Array371A\Array371A\obj\Debug\Array371A.pdb
