@@ -109,7 +109,7 @@ namespace Array371A
 
     public class ProgramStep
     {
-        ushort value; // make float and convert correctly ??
+        ushort value; // make decimal and convert correctly ??
         ushort time;
 
         public ProgramStep(ushort setValue, ushort setTime)

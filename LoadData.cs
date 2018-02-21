@@ -5,15 +5,15 @@ namespace Array371A
     public class LoadData
     {
         //measurments
-        public float current;
-        public float voltage;
-        public float power;
-        public float resistance;
+        public decimal current;
+        public decimal voltage;
+        public decimal power;
+        public decimal resistance;
         //settings
-        public float MaxPower;
-        public float MaxCurrent;
+        public decimal MaxPower;
+        public decimal MaxCurrent;
         public byte RegMode;
-        public float SetPoint;
+        public decimal SetPoint;
         public bool LoadStat;
         public bool PCControl;
         //status
@@ -30,13 +30,13 @@ namespace Array371A
         {
             DataArray = inputFrame.GetPayload();
             //measurments
-            current = (float)(BitConverter.ToUInt16(DataArray, 0)) / 1000;
-            voltage = (float)(BitConverter.ToUInt32(DataArray, 2)) / 1000;
-            power = (float)(BitConverter.ToUInt16(DataArray, 6)) / 10;
-            resistance = (float)(BitConverter.ToUInt16(DataArray, 12)) / 100;
+            current = (decimal)(BitConverter.ToUInt16(DataArray, 0)) / 1000;
+            voltage = (decimal)(BitConverter.ToUInt32(DataArray, 2)) / 1000;
+            power = (decimal)(BitConverter.ToUInt16(DataArray, 6)) / 10;
+            resistance = (decimal)(BitConverter.ToUInt16(DataArray, 12)) / 100;
             //settings
-            MaxPower = (float)(BitConverter.ToUInt16(DataArray, 10)) / 10; ;
-            MaxCurrent = (float)(BitConverter.ToUInt16(DataArray, 8)) / 1000;
+            MaxPower = (decimal)(BitConverter.ToUInt16(DataArray, 10)) / 10; ;
+            MaxCurrent = (decimal)(BitConverter.ToUInt16(DataArray, 8)) / 1000;
             RegMode = DataArray[15];
             generalStatus = DataArray[14];
             //split the general status byte to individual flags
@@ -50,13 +50,13 @@ namespace Array371A
             switch (RegMode)
             {
                 case 0x01:
-                    SetPoint = (float)(BitConverter.ToUInt16(DataArray, 16)) / 1000;
+                    SetPoint = (decimal)(BitConverter.ToUInt16(DataArray, 16)) / 1000;
                     break;
                 case 0x02:
-                    SetPoint = (float)(BitConverter.ToUInt16(DataArray, 18)) / 10; ;
+                    SetPoint = (decimal)(BitConverter.ToUInt16(DataArray, 18)) / 10; ;
                     break;
                 case 0x03:
-                    SetPoint = (float)(BitConverter.ToUInt16(DataArray, 20)) / 100;
+                    SetPoint = (decimal)(BitConverter.ToUInt16(DataArray, 20)) / 100;
                     break;
             }
 

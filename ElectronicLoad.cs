@@ -12,6 +12,12 @@ namespace Array371A
      *  - improved exeption handling, define own exceptions
      * 
      */
+     public enum LoadRegulationModes
+    {
+        current = 0x01,
+        power = 0x02,
+        resistance = 0x03
+    }
      
     public class ElectronicLoad : IDisposable
     {
@@ -20,22 +26,23 @@ namespace Array371A
 
         public SerialPort ComPort;
         public byte Address;
-        public float maxPower = 200.0F;
-        public float maxCurrent = 30.000F;
+        public decimal maxPower = 200.0M;
+        public decimal maxCurrent = 30.000M;
 
         public ElectronicLoad(string PortName, byte loadAddress)
         {
             Address = loadAddress;
-            ComPort = new SerialPort
-            {
-                PortName = PortName,
-                BaudRate = 9600,
-                ReadTimeout = 1000,
-                WriteTimeout = 1000,
-            };
-            ComPort.Open();
-            //todo handle port opening and creation exceptions
-            ComPort.ReadExisting(); // flush port incase exiting data is available
+                ComPort = new SerialPort
+                {
+                    PortName = PortName,
+                    BaudRate = 9600,
+                    ReadTimeout = 1000,
+                    WriteTimeout = 1000,
+                };
+                ComPort.Open();
+                //todo handle port opening and creation exceptions
+                ComPort.ReadExisting(); // flush port incase exiting data is available
+
         }
 
         public ElectronicLoad(string PortName, byte loadAddress, int loadBaudRate)
@@ -61,7 +68,6 @@ namespace Array371A
 
         public LoadControlFrame RecieveFrame()
         {
-            //todo add managment of dataflow and timout exception
             try
             {
                 LoadControlFrame recivedFrame = new LoadControlFrame();
@@ -75,16 +81,19 @@ namespace Array371A
                 }
                 return recivedFrame;
             }
-            catch (TimeoutException)
+            catch (TimeoutException e)
             {
-                throw (new ApplicationException("data retrival timout"));
+                throw (new TimeoutException("Data Retrival timeout",e));
             }
         }
 
         public void Dispose()
         {
-            LocalControl();
-            ComPort.Close();
+            if (ComPort.IsOpen)
+            {
+                LocalControl();
+                ComPort.Close();
+            }
             ComPort.Dispose();
         }
 
@@ -124,44 +133,45 @@ namespace Array371A
             SendFrame(new LoadControlFrame(Address, 0x96));
         }
 
-        public void SetLoadCurrent(float current)
+        public void SetLoadCurrent(decimal current)
         {
             if (current <= 30 || current >= 0)
-                SetLoad(0x01, (ushort)(current * 1000));
+                SetLoad(LoadRegulationModes.current, (ushort)(current * 1000));
             else
-                throw (new ApplicationException("invalid input current can only be between 0 and 30A"));
+                throw (new ArgumentOutOfRangeException("invalid input current can only be between 0 and 30A"));
         }
 
-        public void SetLoadPower(float power)
+        public void SetLoadPower(decimal power)
         {
             if (power <= 200 || power >= 0)
-                SetLoad(0x02, (ushort)(power * 10));
+                SetLoad(LoadRegulationModes.power, (ushort)(power * 10));
             else
-                throw (new ApplicationException("invalid input current can only be between 0 and 200W"));
+                throw (new ArgumentOutOfRangeException("invalid input current can only be between 0 and 200W"));
         }
 
-        public void SetLoadResistance(float resistance)
+        public void SetLoadResistance(decimal resistance)
         {
             if (resistance <= 500 || resistance >= 0)
-                SetLoad(0x03, (ushort)(resistance));
+                SetLoad(LoadRegulationModes.resistance, (ushort)(resistance));
                         else
-                throw (new ApplicationException("invalid input current can only be between 0 and 500Oms"));
+                throw (new ArgumentOutOfRangeException("invalid input current can only be between 0 and 500Oms"));
         }
 
-        public void SetLoad(byte mode, ushort value)
+        public void SetLoad(LoadRegulationModes mode, ushort value)
         {
             byte[] splitValue = BitConverter.GetBytes(value);
             byte[] splitMaxCurrent = BitConverter.GetBytes((ushort)maxCurrent * 1000);
             byte[] splitMaxPower = BitConverter.GetBytes((ushort)maxPower * 10);
-            SendFrame(new LoadControlFrame(Address, 0x90, new byte[] { splitMaxCurrent[0], splitMaxCurrent[1], splitMaxPower[0], splitMaxPower[1], 0xFF, mode, splitValue[0], splitValue[1] }));
+            SendFrame(new LoadControlFrame(Address, 0x90, new byte[] { splitMaxCurrent[0], splitMaxCurrent[1], splitMaxPower[0], splitMaxPower[1], 0xFF, (byte)mode, splitValue[0], splitValue[1] }));
         }
 
         public LoadData GetData()
         {
             const byte command = 0x91;
-            SendFrame(new LoadControlFrame(Address, command));
             try
             {
+                SendFrame(new LoadControlFrame(Address, command));
+
                 LoadControlFrame recieveData = RecieveFrame();
 
                 if (recieveData.ValidateRxFrame(Address, command))
@@ -170,12 +180,12 @@ namespace Array371A
                 }
                 else
                 {
-                    throw (new ApplicationException("Recieve data validation error"));
+                    throw (new ArgumentException(String.Format("{0} is invalid frame data", recieveData), "recieveData"));
                 }
             }
-            catch (ApplicationException)
+            catch (TimeoutException e)
             {
-                throw (new ApplicationException("Load status info failed")); 
+                throw (new TimeoutException("Load did not respond or frame length was invalid",e)); 
             }
         }
     }
